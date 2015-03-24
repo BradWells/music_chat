@@ -1,8 +1,17 @@
 <!-- THIS IS THE HOMEPAGE FOR THE SITE -->
 
-<audio controls>
-    <param name="AutoStart" value="true"/>
+<audio controls autoplay id="main_audio">
+    <source src="http://upload.wikimedia.org/wikipedia/commons/a/a9/Tromboon-sample.ogg" type="audio/ogg">
     <source src="sample_music/Epic_Song.mp3" type="audio/mpeg" />
     <em>Sorry, your browser doesn't support HTML5 audio.</em>
 </audio>
+
 <iframe src="https://kiwiirc.com/client/irc.kiwiirc.com/?nick=musicChat|?#music_chat" style="border:0; width:100%; height:450px;"></iframe>
+
+<script>
+    myAudio=document.getElementById('main_audio');
+    myAudio.addEventListener('canplaythrough', function() {
+      this.currentTime = 12;
+      this.play();
+    });
+</script>
