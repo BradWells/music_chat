@@ -1,3 +1,6 @@
+<?php session_start(); ?>
+<?php require_once './lib/mysqli-wrapper/mywrap.php'; ?>
+<?php require_once './lib/dj.php'; ?>
 <!doctype html>
 <html>
   <head>

@@ -1,0 +1,3 @@
+[submodule "lib/mysqli-wrapper"]
+	path = lib/mysqli-wrapper
+	url = https://www.github.com/ddmills/mysqli-wrapper
