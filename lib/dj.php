@@ -50,10 +50,9 @@ class DJ {
     if ($results->affected_rows() > 0) {
       // add the channel to current user
       DJ::add_channel_to_user($channel_name);
-    } else {
-      return false;
+      return DJ::get_channel($con, $channel_name);
     }
-    return DJ::get_channel($con, $channel_name);
+    return false;
   }
 
   /**
