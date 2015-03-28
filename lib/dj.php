@@ -45,7 +45,12 @@ class DJ {
    * @return Object|null recently created channel
    */
   public static function create_channel($con, $channel_name) {
-    $results = $con->run('insert into channels (name) values (?)', 's', $channel_name);
+    try {
+      $results = $con->run('insert into channels (name) values (?)', 's', $channel_name);
+    } catch(Exception $e) {
+      $results = false;
+    }
+
     // check if any value was actually added
     if ($results->affected_rows() > 0) {
       // add the channel to current user

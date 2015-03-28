@@ -8,6 +8,7 @@ var api = {
     return $.ajax({
       url: BASEURL + 'channel.php',
       method: 'get',
+      dataType: 'json',
       data: {
         'name' : channelName
       }
@@ -18,6 +19,7 @@ var api = {
     return $.ajax({
       url: BASEURL + 'channel.php',
       method: 'post',
+      dataType: 'json',
       data: {
         'name' : channelName
       }
@@ -28,6 +30,7 @@ var api = {
     return $.ajax({
       url: BASEURL + 'track.php',
       method: 'post',
+      dataType: 'json',
       data: {
         'channel_id'   : channelId,
         'track_name'   : trackName,

@@ -5,6 +5,7 @@
 <html>
   <head>
     <title>BE YOUR OWN DJ</title>
+    <link type='text/css' rel='stylesheet' href='src/css/dj.css'></link>
   </head>
   <body>
     <div class='page-header'>
