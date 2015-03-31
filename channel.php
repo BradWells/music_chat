@@ -1,5 +1,19 @@
-<?php include 'parts/header.php'; ?>
+<?php
+include 'parts/header.php';
 
-<h2> welcome to ... <?php echo $_GET['c']; ?> </h2>
+$channel_name = $_GET['c']; // the current channel
+$con          = new mywrap_con(); // a mysql wrapper object
+$channel      = DJ::get_channel($con, $channel_name); // the channel object
 
+if (!$channel) {
+  include 'parts/channel/owner.php';
+} else {
+  if ($channel['owner']) {
+    include 'parts/channel/owner.php';
+  } else {
+    include 'parts/channel/listener.php';
+  }
+}
+?>
+<script> var channel = <?php echo json_encode($channel); ?> </script>
 <?php include 'parts/footer.php'; ?>
