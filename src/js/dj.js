@@ -7,3 +7,14 @@ $(document).on('click', '#create-channel', function() {
     console.log(data);
   });
 });
+
+$(document).on('click', '#channel-add-track-confirm', function() {
+  var name = $('#channel-add-track-name').val();
+  var url = $('#channel-add-track-url').val();
+  $('#channel-container').html('<h4>loading...</h4>');
+  //TODO what exactly is the track number?
+  trackNumber = channel['tracks'].length + 1;
+  api.addTrack(channel["id"], name, url, trackNumber).done(function(trackData) {
+    console.log(trackData);
+  });
+});
