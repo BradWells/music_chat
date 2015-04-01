@@ -98,10 +98,30 @@ class DJ {
    */
   private static function is_valid_track($track_url) {
     // TODO
-    // maybe use file_get_contents?
+    /**
+    * List of acceptable HTML5 mime types and extensions available at:
+    * http://voice.firefallpro.com/2012/03/html5-audio-video-mime-types.html
+    */
+    $audio_mime_types = array(
+      "audio/aac",
+      "audio/mp4",
+      "audio/mpeg",
+      "audio/ogg",
+      "audio/wav",
+      "audio/webm"
+    );
+    $video_mime_types = array(
+      "video/mp4",
+      "video/ogg",
+      "video/webm"
+    );
+    $finfo = finfo_open(FILEINFO_MIME_TYPE); // return mime type ala mimetype extension
+    $type = finfo_file($finfo, $filename);
+    $valid = in_array($type, array_merge($audio_mime_types, $video_mime_types));
+    finfo_close($finfo);
     // check if it is a youtube video?
     // check if it is a raw mp3 file?
-    return true;
+    return $valid;
   }
 
 } ?>
