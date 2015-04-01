@@ -67,8 +67,12 @@ class DJ {
    * @return Array list of tracks
    */
   public static function get_channel_tracks($con, $channel_id) {
+    $tracks = array();
     $results = $con->run('select * from tracks where channel_id = ? order by number', 'i', $channel_id);
-    return $results->fetch_all_array();
+    while ($result = $results->fetch_array()) {
+      $tracks[$result['id']] = $result;
+    }
+    return $tracks;
   }
 
   /**
@@ -98,9 +102,9 @@ class DJ {
    */
   public static function is_valid_track($track_url) {
     // TODO
-    
+
     $valid = false;
-    
+
     /**
     * List of acceptable HTML5 mime types and extensions available at:
     * http://voice.firefallpro.com/2012/03/html5-audio-video-mime-types.html
@@ -118,12 +122,12 @@ class DJ {
       "video/ogg",
       "video/webm"
     );
-    
+
     try {
       $finfo = finfo_open(FILEINFO_MIME_TYPE); // return mime type ala mimetype extension
       $type  = finfo_file($finfo, $track_url);
       $valid = in_array($type, array_merge($audio_mime_types, $video_mime_types));
-      
+
       finfo_close($finfo);
     } catch (Exception $e) {
       $valid = false;
