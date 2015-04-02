@@ -130,6 +130,7 @@ class DJ {
     * http://voice.firefallpro.com/2012/03/html5-audio-video-mime-types.html
     */
     $audio_mime_types = array(
+      "application/ogg",
       "audio/aac",
       "audio/mp4",
       "audio/mpeg",
@@ -143,18 +144,18 @@ class DJ {
       "video/webm"
     );
 
-    try {
-      $finfo = finfo_open(FILEINFO_MIME_TYPE); // return mime type ala mimetype extension
-      $type  = finfo_file($finfo, $track_url);
-      $valid = in_array($type, array_merge($audio_mime_types, $video_mime_types));
+    $types = get_headers($track_url, 1)["Content-Type"];
+    print_r($types);
 
-      finfo_close($finfo);
-    } catch (Exception $e) {
-      $valid = false;
+    $valid_types = array_intersect($types, array_merge($audio_mime_types, $video_mime_types));
+
+    if(!empty($valid_types)){
+      return true;
     }
+
     // check if it is a youtube video?
     // check if it is a raw mp3 file?
-    return $valid;
+    return false;
   }
 
 } ?>
