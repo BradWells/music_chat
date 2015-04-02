@@ -38,5 +38,20 @@ var api = {
         'track_number' : trackNumber
       }
     });
+  },
+
+  updateCurrent: function(channelId, trackId, status, update, offset) {
+    return $.ajax({
+      url: BASEURL + 'current.php',
+      method: 'post',
+      dataType: 'json',
+      data: {
+        'channel_id' : channelId,
+        'track_id'   : trackId,
+        'status'     : status,
+        'update'     : update,
+        'offset'     : offset
+      }
+    });
   }
 }

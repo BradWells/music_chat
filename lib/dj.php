@@ -96,6 +96,26 @@ class DJ {
   }
 
   /**
+   * Update the given channels "currently playing" info
+   * @param mywrap_con $con object to run queries on
+   * @param int $channel_id the channel id
+   * @param int $track_id the currently playing track
+   * @param 'PLAY'|'PAUSE'|'NEW' $status the current status of the track
+   * @param string $update when this data was recorded (in datetime format)
+   * @param double $offset the offset of the current track, in seconds
+   */
+  public static function set_channel_current($con, $channel_id, $track_id, $status, $update, $offset) {
+    $con->run('update channels
+      set
+        current_status = ?,
+        current_track = ?,
+        current_position = ?,
+        current_update = ?
+      where id = ?',
+      'sidsi', array($status, $track_id, $offset, $update, $channel_id));
+  }
+
+  /**
    * Check if the given url can be used with our system
    * @param String $track_url the url of the track
    * @return Boolean true if track is valid

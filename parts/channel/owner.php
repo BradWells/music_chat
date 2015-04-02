@@ -5,6 +5,10 @@
   <button type='button' id='create-channel'>Create it</button>
 </div>
 <div id='channel-container' class='<?php echo $channel ? '' : 'hide'; ?>'>
+
+  <button type='button' id='channel-container-sync'>Sync</button>
+  <button type='button' id='channel-container-update'>Update DB</button>
+
   <ul div='channel-container-tracklist'>
     <?php foreach ($channel['tracks'] as $i=>$track) : ?>
       <li id='track-<?php echo $track['id']; ?>'>

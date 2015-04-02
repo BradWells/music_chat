@@ -2,8 +2,9 @@
 <?php require_once './lib/mysqli-wrapper/mywrap.php'; ?>
 <?php require_once './lib/dj.php'; ?>
 <!doctype html>
-<html>
+<html lang='en'>
   <head>
+    <meta charset='utf-8'></meta>
     <title>BE YOUR OWN DJ</title>
     <link type='text/css' rel='stylesheet' href='src/css/dj.css'></link>
   </head>
