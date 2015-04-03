@@ -85,11 +85,12 @@ class DJ {
    * @return boolean true if track was added, false otherwise
    */
   public static function add_channel_track($con, $channel_id, $track_name, $track_url, $track_number) {
-    if (DJ::is_valid_track($track_url)) {
+    $track_type = DJ::get_track_type($track_url);
+    if ($track_type) {
       if (strlen($track_name) > 0)
       $results = $con->run(
-        'insert into tracks (channel_id, name, url, number) values(?, ?, ?, ?)',
-        array($channel_id, $track_name, $track_url, $track_number));
+        'insert into tracks (channel_id, name, url, number) values(?, ?, ?, ?, ?)',
+        array($channel_id, $track_name, $track_url, $track_number, $track_type));
       return $results->affected_rows() > 0;
     }
     return false;
@@ -120,10 +121,10 @@ class DJ {
    * @param String $track_url the url of the track
    * @return Boolean true if track is valid
    */
-  public static function is_valid_track($track_url) {
+  public static function get_track_type($track_url) {
     // TODO
 
-    $valid = false;
+    $type = false;
 
     /**
     * List of acceptable HTML5 mime types and extensions available at:
@@ -147,15 +148,19 @@ class DJ {
     $types = get_headers($track_url, 1)["Content-Type"];
     print_r($types);
 
-    $valid_types = array_intersect($types, array_merge($audio_mime_types, $video_mime_types));
+    //If one or more of the mime_types are html5 audio
+    if(!empty(array_intersect($types, $audio_mime_types))){
+      $type = 'html5-audio';
+    }
 
-    if(!empty($valid_types)){
-      return true;
+    //If one or more of the mime_types are html5 video
+    if(!empty(array_intersect($types, $video_mime_types))){
+      $type = 'html5-video';
     }
 
     // check if it is a youtube video?
     // check if it is a raw mp3 file?
-    return false;
+    return $type;
   }
 
 } ?>
