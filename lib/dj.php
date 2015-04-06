@@ -119,57 +119,43 @@ class DJ {
   /**
    * Check if the given url can be used with our system
    * @param String $track_url the url of the track
-   * @return Boolean true if track is valid
+   * @return String mime type of given url
    */
   public static function get_track_type($track_url) {
-    // TODO
-
     $type = false;
 
     /**
-    * List of acceptable HTML5 mime types and extensions available at:
-    * http://voice.firefallpro.com/2012/03/html5-audio-video-mime-types.html
-    */
-    $audio_mime_types = array(
-      "application/ogg",
-      "audio/aac",
-      "audio/mp4",
-      "audio/mpeg",
-      "audio/ogg",
-      "audio/wav",
-      "audio/webm"
-    );
-    $video_mime_types = array(
-      "video/mp4",
-      "video/ogg",
-      "video/webm"
+     * List of acceptable HTML5 mime types and extensions available at:
+     * http://voice.firefallpro.com/2012/03/html5-audio-video-mime-types.html
+     */
+    $valid_types = array(
+      'application/ogg',
+      'audio/aac',
+      'audio/mp4',
+      'audio/mpeg',
+      'audio/ogg',
+      'audio/wav',
+      'audio/webm',
+      'video/mp4',
+      'video/ogg',
+      'video/webm'
     );
 
-    $types = get_headers($track_url, 1)["Content-Type"];
+    $headers = get_headers($track_url, 1);
 
-    if(is_array($types)){
-      //If one or more of the mime_types are html5 audio
-      if(!empty(array_intersect($types, $audio_mime_types))){
-        $type = 'html5-audio';
-      }
+    if (empty($headers)) return false;
 
-      //If one or more of the mime_types are html5 video
-      if(!empty(array_intersect($types, $video_mime_types))){
-        $type = 'html5-video';
-      }
-    }
-    else{
-      if(in_array($types, $audio_mime_types)){
-        $type = 'html5-audio';
-      }
-      if(in_array($types, $video_mime_types)){
-        $type = 'html5-video';
-      }
+    $content = $headers['Content-Type'];
+
+    if (is_string($content)) $content = array($content);
+
+    if (is_array($content)) {
+      $types = array_intersect($valid_types, $content);
+      if (empty($types)) return false;
+      return $types[0];
     }
 
-    // check if it is a youtube video?
-    // check if it is a raw mp3 file?
-    return $type;
+    return false;
   }
 
 } ?>
