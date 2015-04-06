@@ -89,7 +89,7 @@ class DJ {
     if ($track_type) {
       if (strlen($track_name) > 0)
       $results = $con->run(
-        'insert into tracks (channel_id, name, url, number) values(?, ?, ?, ?, ?)',
+        'insert into tracks (channel_id, name, url, number, type) values(?, ?, ?, ?, ?)',
         array($channel_id, $track_name, $track_url, $track_number, $track_type));
       return $results->affected_rows() > 0;
     }
