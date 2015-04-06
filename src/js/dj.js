@@ -17,6 +17,9 @@ $(document).on('click', '#channel-add-track-confirm', function() {
   trackNumber = channel['tracks'].length + 1;
   api.addTrack(channel["id"], name, url, trackNumber).done(function(trackData) {
     console.log(trackData);
+    if(trackData == "html5-audio"){
+      $('#channel-container').html('found');
+    }
   });
 });
 

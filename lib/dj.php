@@ -146,16 +146,25 @@ class DJ {
     );
 
     $types = get_headers($track_url, 1)["Content-Type"];
-    print_r($types);
 
-    //If one or more of the mime_types are html5 audio
-    if(!empty(array_intersect($types, $audio_mime_types))){
-      $type = 'html5-audio';
+    if(is_array($types)){
+      //If one or more of the mime_types are html5 audio
+      if(!empty(array_intersect($types, $audio_mime_types))){
+        $type = 'html5-audio';
+      }
+
+      //If one or more of the mime_types are html5 video
+      if(!empty(array_intersect($types, $video_mime_types))){
+        $type = 'html5-video';
+      }
     }
-
-    //If one or more of the mime_types are html5 video
-    if(!empty(array_intersect($types, $video_mime_types))){
-      $type = 'html5-video';
+    else{
+      if(in_array($types, $audio_mime_types)){
+        $type = 'html5-audio';
+      }
+      if(in_array($types, $video_mime_types)){
+        $type = 'html5-video';
+      }
     }
 
     // check if it is a youtube video?
