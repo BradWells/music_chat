@@ -90,6 +90,8 @@ class DJ {
       if (strlen($track_name) > 0)
       $results = $con->run(
         'insert into tracks (channel_id, name, url, number, type) values(?, ?, ?, ?, ?)',
+        'issis'
+        ,
         array($channel_id, $track_name, $track_url, $track_number, $track_type));
       return $results->affected_rows() > 0;
     }
@@ -141,7 +143,8 @@ class DJ {
       'video/webm'
     );
 
-    $headers = get_headers($track_url, 1);
+    //The @ surpresses warnings for invalid URLs
+    $headers = @get_headers($track_url, 1);
 
     if (empty($headers)) return false;
 
@@ -152,6 +155,8 @@ class DJ {
     if (is_array($content)) {
       $types = array_intersect($valid_types, $content);
       if (empty($types)) return false;
+      //Re-index so index 0 exists
+      $types = array_values($types);
       return $types[0];
     }
 

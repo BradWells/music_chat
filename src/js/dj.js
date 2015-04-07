@@ -12,13 +12,20 @@ $(document).on('click', '#create-channel', function() {
 $(document).on('click', '#channel-add-track-confirm', function() {
   var name = $('#channel-add-track-name').val();
   var url = $('#channel-add-track-url').val();
+  var input = $('#channel-container').html();
   $('#channel-container').html('<h4>loading...</h4>');
   //TODO what exactly is the track number?
   trackNumber = channel['tracks'].length + 1;
   api.addTrack(channel["id"], name, url, trackNumber).done(function(trackData) {
     console.log(trackData);
-    if(trackData == "html5-audio"){
-      $('#channel-container').html('found');
+    if(trackData){
+      $('#channel-container').html(
+        '<h4>Track Addition Successful<h4>' + input
+        ).prev().remove();
+    } else {
+      $('#channel-container').html(
+        '<h4>Track Addition Failed<h4>' + input
+        ).prev().remove();
     }
   });
 });
