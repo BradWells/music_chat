@@ -108,7 +108,7 @@ var music = {
   },
   getPosition: function(root, offset) {
     var now = new Date;
-    return (now.getTime() - root.getTime()) * 0.001;
+    return (now.getTime() - root.getTime()) * 0.001 + offset;
   }
 }
 
