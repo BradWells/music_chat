@@ -74,6 +74,18 @@ class DJ {
     }
     return $tracks;
   }
+  
+  /**
+   * Get a single track given a track ID
+   * @param mywrap_con $con object to run queries on
+   * @param int $track_id the track id
+   * @return Track|false the track matching the given track id
+   */
+  public static function get_track($con, $track_id) {
+    $results = $con->run('select * from tracks where id = ? limit 1', 'i', $track_id);
+    // there will only be one track to return (limit 1) or false.
+    return $results->fetch_array();
+  }
 
   /**
    * Get all tracks associated with a given channel ID, in order
@@ -86,16 +98,25 @@ class DJ {
    */
   public static function add_channel_track($con, $channel_id, $track_name, $track_url, $track_number) {
     $track_type = DJ::get_track_type($track_url);
-    if ($track_type) {
-      if (strlen($track_name) > 0)
-      $results = $con->run(
-        'insert into tracks (channel_id, name, url, number, type) values(?, ?, ?, ?, ?)',
-        'issis'
-        ,
-        array($channel_id, $track_name, $track_url, $track_number, $track_type));
-      return $results->affected_rows() > 0;
-    }
-    return false;
+    
+    // make sure track has a name
+    if (strlen($track_name) == 0) return false;
+    
+    // make sure track type is OK
+    if (!$track_type) return false;
+    
+    // create the new track in the database
+    $results = $con->run(
+      'insert into tracks (channel_id, name, url, number, type) values(?, ?, ?, ?, ?)',
+      'issis',
+      array($channel_id, $track_name, $track_url, $track_number, $track_type)
+    );
+    
+    // get the ID of the last row inserted into the database
+    $track_id = $results->last_id();
+    
+    // return the newly made track
+    return DJ::get_track($con, $track_id);
   }
 
   /**
