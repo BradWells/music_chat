@@ -74,6 +74,18 @@ class DJ {
     }
     return $tracks;
   }
+  
+  /**
+   * Get a single track given a track ID
+   * @param mywrap_con $con object to run queries on
+   * @param int $track_id the track id
+   * @return Track|false the track matching the given track id
+   */
+  public static function get_track($con, $track_id) {
+    $results = $con->run('select * from tracks where id = ? limit 1', 'i', $track_id);
+    // there will only be one track to return (limit 1) or false.
+    return $results->fetch_array();
+  }
 
   /**
    * Get all tracks associated with a given channel ID, in order
@@ -85,14 +97,26 @@ class DJ {
    * @return boolean true if track was added, false otherwise
    */
   public static function add_channel_track($con, $channel_id, $track_name, $track_url, $track_number) {
-    if (DJ::is_valid_track($track_url)) {
-      if (strlen($track_name) > 0)
-      $results = $con->run(
-        'insert into tracks (channel_id, name, url, number) values(?, ?, ?, ?)',
-        array($channel_id, $track_name, $track_url, $track_number));
-      return $results->affected_rows() > 0;
-    }
-    return false;
+    $track_type = DJ::get_track_type($track_url);
+    
+    // make sure track has a name
+    if (strlen($track_name) == 0) return false;
+    
+    // make sure track type is OK
+    if (!$track_type) return false;
+    
+    // create the new track in the database
+    $results = $con->run(
+      'insert into tracks (channel_id, name, url, number, type) values(?, ?, ?, ?, ?)',
+      'issis',
+      array($channel_id, $track_name, $track_url, $track_number, $track_type)
+    );
+    
+    // get the ID of the last row inserted into the database
+    $track_id = $results->last_id();
+    
+    // return the newly made track
+    return DJ::get_track($con, $track_id);
   }
 
   /**
@@ -118,43 +142,45 @@ class DJ {
   /**
    * Check if the given url can be used with our system
    * @param String $track_url the url of the track
-   * @return Boolean true if track is valid
+   * @return String mime type of given url
    */
-  public static function is_valid_track($track_url) {
-    // TODO
-
-    $valid = false;
+  public static function get_track_type($track_url) {
+    $type = false;
 
     /**
-    * List of acceptable HTML5 mime types and extensions available at:
-    * http://voice.firefallpro.com/2012/03/html5-audio-video-mime-types.html
-    */
-    $audio_mime_types = array(
-      "application/ogg",
-      "audio/aac",
-      "audio/mp4",
-      "audio/mpeg",
-      "audio/ogg",
-      "audio/wav",
-      "audio/webm"
-    );
-    $video_mime_types = array(
-      "video/mp4",
-      "video/ogg",
-      "video/webm"
+     * List of acceptable HTML5 mime types and extensions available at:
+     * http://voice.firefallpro.com/2012/03/html5-audio-video-mime-types.html
+     */
+    $valid_types = array(
+      'application/ogg',
+      'audio/aac',
+      'audio/mp4',
+      'audio/mpeg',
+      'audio/ogg',
+      'audio/wav',
+      'audio/webm',
+      'video/mp4',
+      'video/ogg',
+      'video/webm'
     );
 
-    $types = get_headers($track_url, 1)["Content-Type"];
-    print_r($types);
+    //The @ surpresses warnings for invalid URLs
+    $headers = @get_headers($track_url, 1);
 
-    $valid_types = array_intersect($types, array_merge($audio_mime_types, $video_mime_types));
+    if (empty($headers)) return false;
 
-    if(!empty($valid_types)){
-      return true;
+    $content = $headers['Content-Type'];
+
+    if (is_string($content)) $content = array($content);
+
+    if (is_array($content)) {
+      $types = array_intersect($valid_types, $content);
+      if (empty($types)) return false;
+      //Re-index so index 0 exists
+      $types = array_values($types);
+      return $types[0];
     }
 
-    // check if it is a youtube video?
-    // check if it is a raw mp3 file?
     return false;
   }
 
