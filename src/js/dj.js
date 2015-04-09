@@ -1,3 +1,6 @@
+var SYNC_INTERVAL = 5000;
+var SYNC_DEGREE_FREEDOM = 5;
+
 $(document).on('click', '#create-channel', function() {
   var name = $('#create-channel-name').val();
   $('#new-channel-container').html('<h4>loading...</h4>');
@@ -52,13 +55,21 @@ Date.prototype.datetime = function() {
 }
 
 $(document).on('click', '#channel-container-sync', function() {
-  api.getChannel(channel['name']).done(function(data) {
+ synchronize(channel['name'], true); 
+ setInterval(synchronize,  SYNC_INTERVAL, channel['name'], false);
+});
+
+function synchronize(name, set_track) {
+  api.getChannel(name).done(function(data) {
     var status = data.current_status;
     if (status == 'PLAY') {
       var current = channel.tracks[data.current_track];
       var date = new Date(data.current_update.replace(/-/g,"/"));
       var offset = music.getPosition(date, data.current_position);
-      music.setTrack(current, offset);
+      var freedom = Math.abs(offset - music.offset()) ;
+      if(set_track || freedom > SYNC_DEGREE_FREEDOM) {
+        music.setTrack(current, offset);
+      }     
     } else if (status == 'PAUSE') {
       music.stop();
     } else {
@@ -66,7 +77,7 @@ $(document).on('click', '#channel-container-sync', function() {
       console.log ('This is a new channel and the tracks haven\'t started playing yet');
     }
   });
-});
+}
 
 
 var music = {
@@ -127,4 +138,3 @@ $(document).on('click', '#channel-container-update', function() {
   var offset = music.offset();
   api.updateCurrent(chan, track, status, update, offset);
 });
-
