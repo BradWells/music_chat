@@ -9,10 +9,8 @@ if (!$channel) {
   include 'parts/channel/owner.php';
 } else {
   if ($channel['owner']) {
-    include 'parts/channel/player.php';
     include 'parts/channel/owner.php';
   } else {
-    include 'parts/channel/player.php';
     include 'parts/channel/listener.php';
   }
 }

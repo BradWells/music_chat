@@ -1,4 +1,4 @@
-<h4> Welcome to <?php echo $channel_name; ?> </h4>
+<h4><?php echo $channel_name; ?> Radio</h4>
 <div id='new-channel-container' class='<?php echo $channel ? 'hide' : ''; ?>'>
   <h4> This channel doesn't exist yet</h4>
   <input type='hidden' id='create-channel-name' value='<?php echo $channel_name; ?>'>
@@ -6,19 +6,32 @@
 </div>
 <div id='channel-container' class='<?php echo $channel ? '' : 'hide'; ?>'>
 
-  <button type='button' id='channel-container-sync'>Sync</button>
-  <button type='button' id='channel-container-update'>Update DB</button>
+  <?php include 'parts/channel/player-controls.php'; ?>
+  <?php include 'parts/channel/player.php'; ?>
 
-  <ul div='channel-container-tracklist'>
-    <?php foreach ($channel['tracks'] as $i=>$track) : ?>
-      <li id='track-<?php echo $track['id']; ?>'>
-        <?php echo $track['name']; ?>
-        <button type='button' class='channel-set-track' data-track='<?php echo $track['id']; ?>'>play</button>
-      </li>
-    <?php endforeach; ?>
-  </ul>
-  <h4>Tracks</h4>
+  <h4>Add Track</h4>
+
+  <label>Track name</label>
   <input id='channel-add-track-name' type='text'>
+
+  <label>Track url</label>
   <input id='channel-add-track-url' type='text'>
+
   <button type='button' id='channel-add-track-confirm'>Add</button>
+
+  <h4>Tracklist</h4>
+  <div class='tracklist-container'>
+    <ul id='tracklist' class='tracklist'>
+      <?php if ($channel) : ?>
+        <?php foreach ($channel['tracks'] as $i=>$track) : ?>
+          <li id='track-<?php echo $track['id']; ?>'>
+            <?php echo $track['name']; ?>
+            <button type='button' class='channel-set-track' data-track='<?php echo $track['id']; ?>'>
+              <i class='fa fa-fw fa-play'></i>
+            </button>
+          </li>
+        <?php endforeach; ?>
+      <?php endif; ?>
+    </ul>
+  </div>
 </div>

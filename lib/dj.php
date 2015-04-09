@@ -74,7 +74,7 @@ class DJ {
     }
     return $tracks;
   }
-  
+
   /**
    * Get a single track given a track ID
    * @param mywrap_con $con object to run queries on
@@ -98,23 +98,23 @@ class DJ {
    */
   public static function add_channel_track($con, $channel_id, $track_name, $track_url, $track_number) {
     $track_type = DJ::get_track_type($track_url);
-    
+
     // make sure track has a name
     if (strlen($track_name) == 0) return false;
-    
+
     // make sure track type is OK
     if (!$track_type) return false;
-    
+
     // create the new track in the database
     $results = $con->run(
       'insert into tracks (channel_id, name, url, number, type) values(?, ?, ?, ?, ?)',
       'issis',
       array($channel_id, $track_name, $track_url, $track_number, $track_type)
     );
-    
+
     // get the ID of the last row inserted into the database
     $track_id = $results->last_id();
-    
+
     // return the newly made track
     return DJ::get_track($con, $track_id);
   }
@@ -122,21 +122,26 @@ class DJ {
   /**
    * Update the given channels "currently playing" info
    * @param mywrap_con $con object to run queries on
-   * @param int $channel_id the channel id
+   * @param string $channel_name the channel name
    * @param int $track_id the currently playing track
    * @param 'PLAY'|'PAUSE'|'NEW' $status the current status of the track
    * @param string $update when this data was recorded (in datetime format)
    * @param double $offset the offset of the current track, in seconds
    */
-  public static function set_channel_current($con, $channel_id, $track_id, $status, $update, $offset) {
-    $con->run('update channels
-      set
-        current_status = ?,
-        current_track = ?,
-        current_position = ?,
-        current_update = ?
-      where id = ?',
-      'sidsi', array($status, $track_id, $offset, $update, $channel_id));
+  public static function set_channel_current($con, $channel_name, $track_id, $status, $update, $offset) {
+    if (DJ::owns_channel($channel_name)) {
+      $con->run('update channels
+        set
+          current_status = ?,
+          current_track = ?,
+          current_position = ?,
+          current_update = ?
+        where name = ?',
+        'sidss', array($status, $track_id, $offset, $update, $channel_name)
+      );
+      return true;
+    }
+    return false;
   }
 
   /**

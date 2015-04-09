@@ -40,13 +40,13 @@ var api = {
     });
   },
 
-  updateCurrent: function(channelId, trackId, status, update, offset) {
+  updateCurrent: function(channelName, trackId, status, update, offset) {
     return $.ajax({
       url: BASEURL + 'current.php',
       method: 'post',
       dataType: 'json',
       data: {
-        'channel_id' : channelId,
+        'channel_name' : channelName,
         'track_id'   : trackId,
         'status'     : status,
         'update'     : update,

@@ -55,7 +55,9 @@ Date.prototype.datetime = function() {
 }
 
 $(document).on('click', '#channel-container-sync', function() {
- synchronize(channel['name'], true); 
+  $('#channel-container-sync').hide();
+  $('.channel-title-modifier').html('Enjoy the sweet sounds of');
+ synchronize(channel['name'], true);
  setInterval(synchronize,  SYNC_INTERVAL, channel['name'], false);
 });
 
@@ -63,22 +65,40 @@ function synchronize(name, set_track) {
   api.getChannel(name).done(function(data) {
     var status = data.current_status;
     if (status == 'PLAY') {
+      $('.channel-notification').html('');
       var current = channel.tracks[data.current_track];
       var date = new Date(data.current_update.replace(/-/g,"/"));
       var offset = music.getPosition(date, data.current_position);
-      var freedom = Math.abs(offset - music.offset()) ;
+      var freedom = Math.abs(offset - music.offset());
       if(set_track || freedom > SYNC_DEGREE_FREEDOM) {
         music.setTrack(current, offset);
-      }     
+      }
     } else if (status == 'PAUSE') {
+      $('.player').addClass('hide');
+      $('.channel-notification').html('The DJ has paused this channel');
       music.stop();
     } else {
       music.stop();
+      $('.player').addClass('hide');
+      $('.channel-notification').html('This is a new channel and the tracks haven\'t started playing yet');
       console.log ('This is a new channel and the tracks haven\'t started playing yet');
     }
   });
 }
 
+
+function formatDurations(s) {
+  var m = Math.floor(s/60);
+  s -= m * 60;
+  s = Math.floor(s) + '';
+  if (s.length == 0) {
+    s = '00';
+  }
+  if (s.length == 1) {
+    s = '0' + s;
+  }
+  return m + ':' + s;
+}
 
 var music = {
   player: $('#channel-player')[0],
@@ -123,18 +143,89 @@ var music = {
   }
 }
 
-$(document).on('click', '.channel-set-track', function() {
-  var track_id = $(this).data('track');
-  var track = channel['tracks'][track_id]
-  music.setTrack(track);
-});
-
-// this will be done automatically later
-$(document).on('click', '#channel-container-update', function() {
-  var chan = channel['id'];
+function updateChannelCurrent() {
+  var chan = channel['name'];
   var track = music.current.id;
   var status = music.status;
   var update = (new Date).datetime();
   var offset = music.offset();
   api.updateCurrent(chan, track, status, update, offset);
+}
+
+$(document).on('click', '.channel-set-track', function() {
+  var track_id = $(this).data('track');
+  var track = channel['tracks'][track_id]
+  music.setTrack(track);
+  updateChannelCurrent();
+});
+
+$(document).on('click', '.player-controls-pause', function() {
+  music.stop();
+  $(this).hide();
+  $('.player-controls-play').show();
+  updateChannelCurrent();
+});
+
+$(document).on('click', '.player-controls-play', function() {
+  music.play();
+  $(this).hide();
+  $('.player-controls-pause').show();
+  updateChannelCurrent();
+});
+
+$(document).on('click', '.player-volume-toggle', function() {
+  if (music.player.muted) {
+    music.player.muted = false;
+    $(this).find('.fa-volume-off').removeClass('fa-volume-off');
+    $(this).find('.fa').addClass('fa-volume-up');
+  } else {
+    music.player.muted = true;
+    $(this).find('.fa-volume-up').removeClass('fa-volume-up');
+    $(this).find('.fa').addClass('fa-volume-off');
+  }
+});
+
+$(document).on('click', '.player-volume', function(e) {
+  var posX = $(this).offset().left;
+  var mouseX = e.pageX;
+  var width = $(this).width();
+  var vol = (mouseX - posX)/width;
+  $('.player-volume-progress').css('width', vol * 100 + '%');
+  music.player.volume = vol;
+});
+
+$(document).on('click', '.player-meter', function(e) {
+  var posX = $(this).offset().left;
+  var mouseX = e.pageX;
+  var width = $(this).width();
+  var prog = (mouseX - posX)/width;
+  var loc = music.player.duration * prog;
+  music.player.currentTime = loc;
+  updateChannelCurrent();
+});
+
+// update total music duration
+music.player.addEventListener('durationchange', function() {
+  $('.player-time-total').html(formatDurations(music.player.duration));
+}, false);
+
+// Update music player time
+music.player.addEventListener('timeupdate', function() {
+  $('.player-time-current').html(formatDurations(music.player.currentTime));
+  var len = music.player.currentTime/music.player.duration * 100;
+  $('.player-meter-progress').css('width', len + '%');
+}, false);
+
+// update total music duration
+music.player.addEventListener('loadstart', function() {
+  $('.player-time-current').html('00:00');
+  $('.player-time-total').html('13:37');
+  $('.player-meter-progress').css('width', 0 + '%');
+  $('.player-name').html('loading <i class="fa fa-fw fa-spin fa-cog"></i>');
+}, false);
+
+music.player.addEventListener('playing', function() {
+  $('.player').removeClass('hide');
+  $('.player-controls').removeClass('hide');
+  $('.player-name').html(music.current.name);
 });
