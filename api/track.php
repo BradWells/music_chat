@@ -22,6 +22,6 @@ if ($method == 'POST') {
     $result = array('error' => 'Must include "channel_id", "track_name", "track_url", and "track_number" to create a new track.');
   }
 
-  echo json_encode($result, JSON_PRETTY_PRINT);
+  echo json_encode($result);
 }
 ?>

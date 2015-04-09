@@ -19,7 +19,7 @@ if ($method == 'GET') {
     $result = array('error' => 'Must specify channel name');
   }
 
-  echo json_encode($result, JSON_PRETTY_PRINT);
+  echo json_encode($result);
 }
 
 // check if POST method was used, if it was, create a new channel
@@ -32,6 +32,6 @@ if ($method == 'POST') {
     $result = array('error' => 'Must specify channel name');
   }
 
-  echo json_encode($result, JSON_PRETTY_PRINT);
+  echo json_encode($result);
 }
 ?>
