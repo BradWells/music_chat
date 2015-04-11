@@ -1,5 +1,5 @@
 var SYNC_INTERVAL = 5000;
-var SYNC_DEGREE_FREEDOM = 5;
+var SYNC_DEGREE_FREEDOM = 1;
 
 $(document).on('click', '#create-channel', function() {
   var name = $('#create-channel-name').val();
