@@ -4,7 +4,7 @@
   <input type='hidden' id='create-channel-name' value='<?php echo $channel_name; ?>'>
   <button type='button' id='create-channel'>Create it</button>
 </div>
-<div id='channel-container' class='<?php echo $channel ? '' : 'hide'; ?>'>
+<div id='channel-container' class='hide'; ?>>
 
   <?php include 'parts/channel/player-controls.php'; ?>
   <?php include 'parts/channel/player.php'; ?>

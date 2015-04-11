@@ -1,12 +1,13 @@
 /*
- * This file controls all communication between the client and server
+ *  DJ API
+ *
+ *  The dj-api controls all asynchronous communication
+ *  between the client and server
  */
-var BASEURL = 'api/';
-
-var api = {
+dj.api = {
   getChannel: function(channelName) {
     return $.ajax({
-      url: BASEURL + 'channel.php',
+      url: 'api/channel.php',
       method: 'get',
       dataType: 'json',
       data: {
@@ -17,7 +18,7 @@ var api = {
 
   createChannel: function(channelName) {
     return $.ajax({
-      url: BASEURL + 'channel.php',
+      url: 'api/channel.php',
       method: 'post',
       dataType: 'json',
       data: {
@@ -28,7 +29,7 @@ var api = {
 
   addTrack: function(channelId, trackName, trackUrl, trackNumber) {
     return $.ajax({
-      url: BASEURL + 'track.php',
+      url: 'api/track.php',
       method: 'post',
       dataType: 'json',
       data: {
@@ -42,7 +43,7 @@ var api = {
 
   updateCurrent: function(channelName, trackId, status, update, offset) {
     return $.ajax({
-      url: BASEURL + 'current.php',
+      url: 'api/current.php',
       method: 'post',
       dataType: 'json',
       data: {

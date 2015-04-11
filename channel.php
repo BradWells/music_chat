@@ -14,6 +14,6 @@ if (!$channel) {
     include 'parts/channel/listener.php';
   }
 }
+
+include 'parts/footer.php';
 ?>
-<script> var channel = <?php echo json_encode($channel); ?> </script>
-<?php include 'parts/footer.php'; ?>

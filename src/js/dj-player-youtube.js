@@ -1,10 +1,16 @@
-// called by the youtube API when the iframe is loaded
-function onYouTubeIframeAPIReady() { youtubePlayer._doReady(); }
-
-youtubePlayer = {
+/*
+ *  dj-player-youtube.js
+ *
+ *  Creates a standard interface for the youtube API
+ */
+dj.players.youtube = {
   api: null,
   _evntCount: 0,
   _evnts: {},
+  // check if this can handle the track
+  handles: function(track) {
+    return track.type == 'youtube';
+  },
   play: function() {
     this.api.playVideo();
   },
@@ -12,7 +18,7 @@ youtubePlayer = {
     this.api.pauseVideo();
   },
   load: function(url) {
-    this.api.loadVideoByUrl(url);
+    this.api.loadVideoById(url);
   },
   mute: function() {
     this.api.mute();
@@ -41,10 +47,10 @@ youtubePlayer = {
     // check if video is loaded
     if (e.data == 5 || e.data == 1) {
       // pop all from event que
-      for (var k in youtubePlayer._evnts) {
-        if (youtubePlayer._evnts.hasOwnProperty(k)) {
-          youtubePlayer._evnts[k].cb();
-          delete youtubePlayer._evnts[k];
+      for (var k in dj.players.youtube._evnts) {
+        if (dj.players.youtube._evnts.hasOwnProperty(k)) {
+          dj.players.youtube._evnts[k].cb();
+          delete dj.players.youtube._evnts[k];
         }
       }
     }
@@ -105,3 +111,5 @@ youtubePlayer = {
     this.api.addEventListener('onStateChange', this._handleStateChange);
   }
 }
+// called by the youtube API when the iframe is loaded
+function onYouTubeIframeAPIReady() { dj.players.youtube._doReady(); }
