@@ -1,8 +1,17 @@
 <div class='player'>
   <div class='player-playing'>
-    <div class='player-volume-container'>
+    <div class='player-options-container'>
+      <button type='button' class='btn-ctl player-video-toggle'>
+        <span class='fa-stack'>
+          <i class='fa fa-stack-1x fa-video-camera'></i>
+          <i class='fa fa-stack-2x fa-ban'></i>
+        </span>
+      </button>
       <button type='button' class='btn-vol player-volume-toggle'>
-        <i class='fa fa-volume-up'></i>
+        <span class='fa-stack'>
+          <i class='fa fa-stack-1x fa-volume-up'></i>
+          <i class='fa fa-stack-2x fa-ban'></i>
+        </span>
       </button>
       <div class='player-volume-max'>
         <div class='player-volume'>

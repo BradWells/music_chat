@@ -9,12 +9,14 @@ dj.utils = {
     return (now.getTime() - root.getTime()) * 0.001 + offset;
   },
   updateChannelCurrent: function() {
-    var chan = dj.channel.name;
-    var track = dj.controls.currentTrack.id;
-    var status = dj.controls.state.status;
-    var update = (new Date);
-    var offset = dj.controls.location();
-    dj.api.updateCurrent(chan, track, status, update.datetime(), offset);
+    if (dj.channel.owner) {
+      var chan = dj.channel.name;
+      var track = dj.controls.currentTrack.id;
+      var status = dj.controls.state.status;
+      var update = (new Date);
+      var offset = dj.controls.location();
+      dj.api.updateCurrent(chan, track, status, update.datetime(), offset);
+    }
   },
   formatSeconds: function(s) {
     var m = Math.floor(s/60);

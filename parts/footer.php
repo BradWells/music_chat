@@ -12,8 +12,9 @@
   <!-- fonts -->
   <link href='http://fonts.googleapis.com/css?family=Roboto:400,500,700,400italic|Fjord+One' rel='stylesheet' type='text/css'>
 
-  <!-- jquery -->
+  <!-- vendor scripts -->
   <script src='https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+  <script src='src/js/underscore.min.js'></script>
 
   <!-- local scripts -->
   <script> var dj = {}; </script>
@@ -23,6 +24,7 @@
   <script src='src/js/dj-controls.js'></script>
   <script src='src/js/dj-utils.js'></script>
   <script src='src/js/dj-view.js'></script>
+  <script src='src/js/dj-tracks.js'></script>
 
   <!-- players -->
   <script src='src/js/dj-player-youtube.js'></script>

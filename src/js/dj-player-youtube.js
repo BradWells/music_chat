@@ -39,18 +39,33 @@ dj.players.youtube = {
     return this.api.getDuration();
   },
   location: function(loc) {
-    if (!loc) return this.api.getCurrentTime();
+    if (loc == undefined) return this.api.getCurrentTime();
     this.api.seekTo(loc, true);
     return this;
   },
   _handleStateChange: function(e) {
     // check if video is loaded
     if (e.data == 5 || e.data == 1) {
-      // pop all from event que
+      // pop all 'loaded' events from event que
       for (var k in dj.players.youtube._evnts) {
         if (dj.players.youtube._evnts.hasOwnProperty(k)) {
-          dj.players.youtube._evnts[k].cb();
-          delete dj.players.youtube._evnts[k];
+          var e = dj.players.youtube._evnts[k];
+          if (e.type == 'load') {
+            e.cb();
+            delete dj.players.youtube._evnts[k];
+          }
+        }
+      }
+    }
+    if (e.data == 0) {
+      // pop all 'ended' events from event que
+      for (var k in dj.players.youtube._evnts) {
+        if (dj.players.youtube._evnts.hasOwnProperty(k)) {
+          var e = dj.players.youtube._evnts[k];
+          if (e.type == 'end') {
+            e.cb();
+            delete dj.players.youtube._evnts[k];
+          }
         }
       }
     }
@@ -67,6 +82,19 @@ dj.players.youtube = {
     // push to event que if player isn't ready
     this._evnts[++this._evntCount] = {
       'id': this._evntCount,
+      'type': 'load',
+      'cb': callback
+    }
+
+    return this;
+  },
+  mediaEnded: function(callback) {
+    var s = this.api.getPlayerState();
+
+    // push to event que
+    this._evnts[++this._evntCount] = {
+      'id': this._evntCount,
+      'type': 'end',
       'cb': callback
     }
 

@@ -1,4 +1,10 @@
-<h4><span class='channel-title-modifier'>Welcome to</span> <span class='channel-title'><?php echo $channel_name; ?></span></h4>
-<button type='button' id='channel-container-sync'>Start Listening </button>
-<p class='channel-notification'></p>
-<?php include 'parts/channel/player.php'; ?>
+<h4>
+  <span class='channel-title-modifier'>loading: </span>
+  <span class='channel-title'><?php echo htmlspecialchars($channel_name); ?></span>
+</h4>
+<div class='channel-container hide'>
+  <button type='button' id='channel-container-sync'>Start Listening </button>
+  <p class='channel-notification'></p>
+  <?php include 'parts/channel/player.php'; ?>
+</div>
+<?php include 'parts/channel/loader.php'; ?>

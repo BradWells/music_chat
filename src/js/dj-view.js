@@ -9,6 +9,27 @@ dj.view = {
     $('.player-time-current').html('~:~');
     $('.player-time-total').html('~:~');
   },
+  onPlay: function() {
+    $('.channel-title-status').html(dj.controls.state.status);
+  },
+  onPause: function() {
+    $('.channel-title-status').html(dj.controls.state.status);
+  },
+  onMute: function() {
+    $('.player-volume-toggle .fa-ban').show();
+  },
+  onUnmute: function() {
+    $('.player-volume-toggle .fa-ban').hide();
+  },
+  onShow: function() {
+    $('.player-video-toggle .fa-ban').hide();
+  },
+  onHide: function() {
+    $('.player-video-toggle .fa-ban').show();
+  },
+  onVolumeChange: function() {
+    $('.player-volume-progress').css('width', dj.controls.state.volume * 100 + '%');
+  },
   onLocationChange: function() {
     var loc = dj.controls.location();
     var dur = dj.controls.duration();
@@ -17,17 +38,15 @@ dj.view = {
     var len = loc / dur * 100;
     $('.player-meter-progress').css('width', len + '%');
   },
-  onMuteChange: function() {
-    if (controls.state.muted) {
-      $('.player-volume-toggle .fa-volume-up').removeClass('fa-volume-up');
-      $('.player-volume-toggle .fa').addClass('fa-volume-off');
-    } else {
-      $('.player-volume-toggle .fa-volume-off').removeClass('fa-volume-off');
-      $('.player-volume-toggle .fa').addClass('fa-volume-up');
-    }
-  },
   onPageLoad: function() {
-    console.log ('ALL READY');
+    if (dj.channel.owner) {
+      $('.channel-title-modifier').html('Station: ');
+    } else {
+      $('.channel-title-modifier').html('You\'re listening to the sweet sounds of ');
+    }
+    $('.channel-container').removeClass('hide');
+    $('.channel-loader-container').addClass('hide');
+    $('.channel-title-status').html(dj.controls.state.status);
   }
 }
 
@@ -46,7 +65,12 @@ $(document).on('click', '.channel-set-track', function() {
 
 // ## Volume Toggle
 $(document).on('click', '.player-volume-toggle', function() {
-  dj.controls.mute(!controls.state.muted);
+  dj.controls.mute(!dj.controls.state.muted);
+});
+
+// ## Video Toggle
+$(document).on('click', '.player-video-toggle', function() {
+  dj.controls.show(!dj.controls.state.show);
 });
 
 // ## Pause Button
@@ -119,7 +143,7 @@ $(document).on('click', '#channel-add-track-confirm', function() {
 $(document).on('click', '#channel-container-sync', function() {
   $('#channel-container-sync').hide();
   $('.channel-title-modifier').html('Enjoy the sweet sounds of');
-  dj.utils.synchronize(channel['name'], true);
+  dj.utils.synchronize(dj.channel.name, true);
   setInterval(dj.utils.synchronize,  SYNC_INTERVAL, dj.channel.name, false);
 });
 

@@ -1,10 +1,16 @@
-<h4><?php echo $channel_name; ?> Radio</h4>
-<div id='new-channel-container' class='<?php echo $channel ? 'hide' : ''; ?>'>
+<h4>
+  <span class='channel-title-modifier'></span>
+  <span class='channel-title'><?php echo htmlspecialchars($channel_name); ?></span>
+  <span class='channel-title-status-container'>
+    [<span class='channel-title-status'>LOADING</span>]
+  </span>
+</h4>
+<div class='new-channel-container <?php echo $channel ? 'hide' : ''; ?>'>
   <h4> This channel doesn't exist yet</h4>
   <input type='hidden' id='create-channel-name' value='<?php echo $channel_name; ?>'>
   <button type='button' id='create-channel'>Create it</button>
 </div>
-<div id='channel-container' class='hide'; ?>>
+<div class='channel-container hide'>
 
   <?php include 'parts/channel/player-controls.php'; ?>
   <?php include 'parts/channel/player.php'; ?>
@@ -35,3 +41,4 @@
     </ul>
   </div>
 </div>
+<?php include 'parts/channel/loader.php'; ?>

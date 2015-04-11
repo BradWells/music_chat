@@ -55,6 +55,15 @@ dj.players.audio = {
     this.el.addEventListener('canplaythrough', fn, false);
     return this;
   },
+  mediaEnded: function(callback) {
+    var self = this, cb = callback;
+    var fn = function(e) {
+      callback(e);
+      self.el.removeEventListener('ended', fn, false);
+    }
+    this.el.addEventListener('ended', fn, false);
+    return this;
+  },
   shutdown: function() {
     this.mute();
     this.pause();

@@ -11,19 +11,26 @@ var dj = {
 }
 
 $(document).ready(function() {
-  dj.api.getChannel('sweggg').done(function(data) {;
+  dj.api.getChannel(CURRENT_CHANNEL_NAME).done(function(data) {
     dj.channel = data;
     dj.view.onPageLoad();
+    dj.controls.initialize();
   });
 });
 
 
-
+/*
+ *  dj.errors
+ *
+ *  Do error stuff here
+ */
 dj.errors = {
   emit: function(err) {
     alert(err);
   }
 }
+
+
 /*
  *  misc.
  *
