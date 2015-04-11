@@ -21,7 +21,7 @@ body {
 .page {
   margin-left  : auto;
   margin-right : auto;
-  width        : 600px; /* 960px; */
+  width        : 640px; /* 960px; */
   position     : relative;
 }
 
@@ -56,7 +56,7 @@ body {
 
 .page-content > .page {
   height  : 100%;
-  padding : 16px;
+  padding : 16px 0;
   z-index : 8;
   /*
   border-left      : 1px solid #FF93ED;
@@ -201,7 +201,8 @@ h6 {
 }
 
 .player-controls {
-  margin : 10px 0;
+  margin : 0 0;
+  float  : right;
 }
 
 .player-playing {
@@ -212,7 +213,7 @@ h6 {
   display : block;
   width   : 100%;
   background-color : #ccc;
-  height  : 5px;
+  height  : 8px;
 }
 
 .player-meter.ower {
@@ -287,4 +288,15 @@ h6 {
   border     : none;
   outline    : none;
   border-image : none;
+}
+
+#youtube-player-container {
+  position: relative;
+}
+#youtube-player-cover {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
 }

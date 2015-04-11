@@ -1,7 +1,4 @@
-<audio id='channel-player'>
-  <source src='' type='audio/mpeg'>
-</audio>
-<div class='player hide'>
+<div class='player'>
   <div class='player-playing'>
     <div class='player-volume-container'>
       <button type='button' class='btn-vol player-volume-toggle'>
@@ -23,4 +20,9 @@
     <div class='player-buffer-progress'></div>
     <div class='player-meter-progress'></div>
   </div>
+</div>
+<audio id='html5-audio-player'></audio>
+<div id='youtube-player-container'>
+  <div id='youtube-player-cover'></div>
+  <div id='youtube-player'></div>
 </div>

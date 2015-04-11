@@ -68,121 +68,242 @@ function synchronize(name, set_track) {
       $('.channel-notification').html('');
       var current = channel.tracks[data.current_track];
       var date = new Date(data.current_update.replace(/-/g,"/"));
-      var offset = music.getPosition(date, data.current_position);
-      var freedom = Math.abs(offset - music.offset());
-      if(set_track || freedom > SYNC_DEGREE_FREEDOM) {
-        music.setTrack(current, offset);
+      var offset = utils.getRealOffset(date, data.current_position);
+      var freedom = Math.abs(offset - controls.location());
+      if (set_track || freedom > SYNC_DEGREE_FREEDOM) {
+        controls.setTrack(current, offset);
       }
     } else if (status == 'PAUSE') {
       $('.player').addClass('hide');
       $('.channel-notification').html('The DJ has paused this channel');
-      music.stop();
+      controls.pause();
     } else {
-      music.stop();
       $('.player').addClass('hide');
       $('.channel-notification').html('This is a new channel and the tracks haven\'t started playing yet');
-      console.log ('This is a new channel and the tracks haven\'t started playing yet');
+      controls.pause();
     }
   });
 }
 
-
-function formatDurations(s) {
-  var m = Math.floor(s/60);
-  s -= m * 60;
-  s = Math.floor(s) + '';
-  if (s.length == 0) {
-    s = '00';
-  }
-  if (s.length == 1) {
-    s = '0' + s;
-  }
-  return m + ':' + s;
+var players = {
+  youtube: youtubePlayer,
+  audio: html5audioPlayer
 }
 
-var music = {
-  player: $('#channel-player')[0],
-  current: channel['tracks'][channel['current_track']],
-  status: channel['status'],
+var controls = {
+  currentTrack: null,
+  activePlayer: null,
+  ACTIVE: false,
+  muted: false,
+  state: {
+    status: 'UNSET',
+    muted: false,
+    volume: 0.75,
+    location: 0,
+    show: true
+  },
   play: function() {
-    this.player.play();
-    this.status = 'PLAY';
-  },
-  stop: function() {
-    this.player.pause();
-    this.status = 'PAUSE';
-  },
-  nextTrack: function() {
-
-  },
-  offset: function() {
-    return this.player.currentTime;
-  },
-  setTrack: function(track, offset) {
-    offset = offset || 0; // offset will default to zero
-    this.current = track; // set this' current track
-    var self = this; // need a reference to self because of context change below
-    // this function will be called once the audio can be played all the way through
-    var startPlaying = function() {
-      self.player.currentTime = offset;
-      self.play();
-      self.player.removeEventListener('canplaythrough', startPlaying, false);
-    }
-    // add event listener
-    this.player.addEventListener('canplaythrough', startPlaying, false);
-    // set new audio source
-    this.player.src = track.url;
+    this.state.status = 'PLAY';
+    if (!this.ACTIVE) return false;
+    this.activePlayer.play();
+    utils.updateChannelCurrent();
     return this;
   },
-  start: function() {
-
+  pause: function() {
+    if (!this.ACTIVE) return false;
+    this.activePlayer.pause();
+    this.state.status = 'PAUSE';
+    utils.updateChannelCurrent();
+    return this;
   },
-  getPosition: function(root, offset) {
-    var now = new Date;
-    return (now.getTime() - root.getTime()) * 0.001 + offset;
+  mute: function(doMute) {
+    if (doMute == undefined || doMute == true) {
+      this.state.muted = true;
+      if (this.ACTIVE) this.activePlayer.mute();
+    } else {
+      this.state.muted = false;
+      if (this.ACTIVE) this.activePlayer.unMute();
+    }
+    view.onMuteChange();
+    return this;
+  },
+  show: function(doShow) {
+    var s = doShow || doShow == undefined;
+    this.state.show = s;
+    if (!this.ACTIVE) return false;
+    if (s) {
+      this.activePlayer.show();
+    } else {
+      this.activePlayer.hide();
+    }
+    return this;
+  },
+  location: function(loc) {
+    if (!this.ACTIVE) return false;
+    this.state.location = loc;
+    if (loc != undefined) utils.updateChannelCurrent();
+    return this.activePlayer.location(loc);
+  },
+  duration: function() {
+    if (!this.ACTIVE) return false;
+    return this.activePlayer.duration();
+  },
+  setActivePlayer: function(player) {
+    if (this.ACTIVE) this.activePlayer.shutdown();
+    this.activePlayer = player;
+    this.activePlayer.initialize(this.state);
+    this.ACTIVE = true;
+  },
+  setTrack: function(track, offset) {
+    console.log ('setTrack(' + track.name + ', ' + offset + ');');
+    var self = this;
+
+    if (track.type == 'youtube') {
+      this.setActivePlayer(players.youtube);
+    } else {
+      this.setActivePlayer(players.audio);
+    }
+
+    if (this.currentTrack == null || track.id != this.currentTrack.id) {
+      this.currentTrack = track;
+      var then = new Date;
+      this.activePlayer.mediaLoaded(function() {
+        offset = offset || 0;
+        var o = utils.getRealOffset(then, offset);
+        self.location(o);
+        if (self.state.status == 'UNSET' || self.state.status == 'PLAY') {
+          self.play();
+        } else if (self.state.status == 'PAUSE') {
+          self.pause();
+        }
+        view.onTrackChange();
+      });
+      this.activePlayer.load(this.currentTrack.url);
+    } else {
+      console.log ('ALRDY ON THIS TRACK');
+      offset = offset || 0;
+      self.location(offset);
+      if (self.state.status == 'UNSET' || self.state.status == 'PLAY') {
+        self.play();
+      } else if (self.state.status == 'PAUSE') {
+        self.pause();
+      }
+      view.onTrackChange();
+    }
+
+    return this;
+  },
+  volume: function(vol) {
+    if (!this.ACTIVE) return false;
+    this.state.volume = vol;
+    return this.activePlayer.volume(vol);
   }
 }
 
-function updateChannelCurrent() {
-  var chan = channel['name'];
-  var track = music.current.id;
-  var status = music.status;
-  var update = (new Date).datetime();
-  var offset = music.offset();
-  api.updateCurrent(chan, track, status, update, offset);
+var utils = {
+  getRealOffset: function(root, offset) {
+    var now = new Date;
+    return (now.getTime() - root.getTime()) * 0.001 + offset;
+  },
+  updateChannelCurrent: function() {
+    var chan = channel.name;
+    var track = controls.currentTrack.id;
+    var status = controls.state.status;
+    var update = (new Date);
+    var offset = controls.location();
+    api.updateCurrent(chan, track, status, update.datetime(), offset);
+  },
+  formatSeconds: function(s) {
+    var m = Math.floor(s/60);
+    s -= m * 60;
+    s = Math.floor(s) + '';
+    if (s.length == 0) s = '00';
+    if (s.length == 1) s = '0' + s;
+    return m + ':' + s;
+  }
 }
+
+var view = {
+  onTrackChange: function() {
+    $('.player-name').html(controls.currentTrack.name);
+    $('.player-time-current').html('~:~');
+    $('.player-time-total').html('~:~');
+  },
+  onLocationChange: function() {
+    var loc = controls.location();
+    var dur = controls.duration();
+    $('.player-time-current').html(utils.formatSeconds(loc));
+    $('.player-time-total').html(utils.formatSeconds(dur));
+    var len = loc / dur * 100;
+    $('.player-meter-progress').css('width', len + '%');
+  },
+  onMuteChange: function() {
+    if (controls.state.muted) {
+      $('.player-volume-toggle .fa-volume-up').removeClass('fa-volume-up');
+      $('.player-volume-toggle .fa').addClass('fa-volume-off');
+    } else {
+      $('.player-volume-toggle .fa-volume-off').removeClass('fa-volume-off');
+      $('.player-volume-toggle .fa').addClass('fa-volume-up');
+    }
+  }
+}
+
+setInterval(view.onLocationChange, 1000);
 
 $(document).on('click', '.channel-set-track', function() {
   var track_id = $(this).data('track');
   var track = channel['tracks'][track_id]
-  music.setTrack(track);
-  updateChannelCurrent();
-});
-
-$(document).on('click', '.player-controls-pause', function() {
-  music.stop();
-  $(this).hide();
-  $('.player-controls-play').show();
-  updateChannelCurrent();
-});
-
-$(document).on('click', '.player-controls-play', function() {
-  music.play();
-  $(this).hide();
-  $('.player-controls-pause').show();
-  updateChannelCurrent();
+  controls.setTrack(track);
 });
 
 $(document).on('click', '.player-volume-toggle', function() {
-  if (music.player.muted) {
-    music.player.muted = false;
-    $(this).find('.fa-volume-off').removeClass('fa-volume-off');
-    $(this).find('.fa').addClass('fa-volume-up');
-  } else {
-    music.player.muted = true;
-    $(this).find('.fa-volume-up').removeClass('fa-volume-up');
-    $(this).find('.fa').addClass('fa-volume-off');
-  }
+  controls.mute(!controls.state.muted);
+});
+
+//
+// $(document).on('click', '.player-controls-pause', function() {
+//   music.stop();
+//   $(this).hide();
+//   $('.player-controls-play').show();
+//   updateChannelCurrent();
+// });
+//
+// $(document).on('click', '.player-controls-play', function() {
+//   music.play();
+//   $(this).hide();
+//   $('.player-controls-pause').show();
+//   updateChannelCurrent();
+// });
+//
+// $(document).on('click', '.player-volume-toggle', function() {
+//   if (music.player.muted) {
+//     music.player.muted = false;
+//     $(this).find('.fa-volume-off').removeClass('fa-volume-off');
+//     $(this).find('.fa').addClass('fa-volume-up');
+//   } else {
+//     music.player.muted = true;
+//     $(this).find('.fa-volume-up').removeClass('fa-volume-up');
+//     $(this).find('.fa').addClass('fa-volume-off');
+//   }
+// });
+//
+// $(document).on('click', '.player-volume', function(e) {
+//   var posX = $(this).offset().left;
+//   var mouseX = e.pageX;
+//   var width = $(this).width();
+//   var vol = (mouseX - posX)/width;
+//   $('.player-volume-progress').css('width', vol * 100 + '%');
+//   music.player.volume = vol;
+// });
+//
+$(document).on('click', '.player-meter', function(e) {
+  var posX = $(this).offset().left;
+  var mouseX = e.pageX;
+  var width = $(this).width();
+  var prog = (mouseX - posX)/width;
+  var loc = controls.duration() * prog;
+  controls.location(loc);
+  // updateChannelCurrent();
 });
 
 $(document).on('click', '.player-volume', function(e) {
@@ -191,41 +312,5 @@ $(document).on('click', '.player-volume', function(e) {
   var width = $(this).width();
   var vol = (mouseX - posX)/width;
   $('.player-volume-progress').css('width', vol * 100 + '%');
-  music.player.volume = vol;
-});
-
-$(document).on('click', '.player-meter', function(e) {
-  var posX = $(this).offset().left;
-  var mouseX = e.pageX;
-  var width = $(this).width();
-  var prog = (mouseX - posX)/width;
-  var loc = music.player.duration * prog;
-  music.player.currentTime = loc;
-  updateChannelCurrent();
-});
-
-// update total music duration
-music.player.addEventListener('durationchange', function() {
-  $('.player-time-total').html(formatDurations(music.player.duration));
-}, false);
-
-// Update music player time
-music.player.addEventListener('timeupdate', function() {
-  $('.player-time-current').html(formatDurations(music.player.currentTime));
-  var len = music.player.currentTime/music.player.duration * 100;
-  $('.player-meter-progress').css('width', len + '%');
-}, false);
-
-// update total music duration
-music.player.addEventListener('loadstart', function() {
-  $('.player-time-current').html('00:00');
-  $('.player-time-total').html('13:37');
-  $('.player-meter-progress').css('width', 0 + '%');
-  $('.player-name').html('loading <i class="fa fa-fw fa-spin fa-cog"></i>');
-}, false);
-
-music.player.addEventListener('playing', function() {
-  $('.player').removeClass('hide');
-  $('.player-controls').removeClass('hide');
-  $('.player-name').html(music.current.name);
+  controls.volume(vol);
 });
