@@ -20,6 +20,26 @@ dj.controls = {
     this.show(this.state.show);
     this.volume(this.state.volume);
   },
+  applyState: function(s) {
+
+    console.log (s);
+
+    var freedom = Math.abs(s.location - this.location());
+    console.log (freedom);
+
+    if (this.currentTrack == null || this.currentTrack.id != s.track.id) {
+      this.setTrack(s.track, s.location);
+    } else if (freedom > SYNC_DEGREE_FREEDOM) {
+      this.location(s.location);
+    }
+
+    if (s.status == 'PLAYING') {
+      this.play();
+    } else if (s.status == 'PAUSED') {
+      this.pause();
+    }
+
+  },
   play: function() {
     this.state.status = 'PLAYING';
     if (!this.ACTIVE) return false;
@@ -63,8 +83,9 @@ dj.controls = {
   location: function(loc) {
     if (!this.ACTIVE) return false;
     this.state.location = loc;
-    if (loc != undefined) dj.utils.updateChannelCurrent();
-    return this.activePlayer.location(loc);
+    if (loc == undefined) return this.activePlayer.location();
+    this.activePlayer.location(loc)
+    dj.utils.updateChannelCurrent();
   },
   duration: function() {
     if (!this.ACTIVE) return false;
@@ -100,6 +121,7 @@ dj.controls = {
     }
   },
   setTrack: function(track, offset) {
+    var then = new Date;
     offset = offset || 0;
     console.log ('setTrack(' + track.name + ', ' + offset + ');');
     var self = this;
@@ -115,29 +137,36 @@ dj.controls = {
 
     if (this.currentTrack == null || track.id != this.currentTrack.id) {
       this.currentTrack = track;
-      var then = new Date;
       this.activePlayer.mediaLoaded(function() {
-        var o = dj.utils.getRealOffset(then, offset);
-        self.location(o);
+
         if (self.state.status == 'UNSET' || self.state.status == 'PLAYING') {
           self.play();
         } else if (self.state.status == 'PAUSED') {
           self.pause();
         }
-        dj.view.onTrackChange();
+
+        var o = dj.utils.getRealOffset(then, offset);
+        self.location(o);
+
         self.activePlayer.mediaEnded(self._onTrackEnd.bind(self));
       });
+
       this.activePlayer.load(this.currentTrack.url);
     } else {
-      console.log ('ALRDY ON THIS TRACK');
-      self.location(offset);
+
       if (self.state.status == 'UNSET' || self.state.status == 'PLAYING') {
         self.play();
       } else if (self.state.status == 'PAUSED') {
         self.pause();
       }
+
+      var o = dj.utils.getRealOffset(then, offset);
+      self.location(o);
+
       dj.view.onTrackChange();
     }
+
+    dj.utils.updateChannelCurrent();
 
     return this;
   },

@@ -42,6 +42,7 @@ dj.api = {
   },
 
   updateCurrent: function(channelName, trackId, status, update, offset) {
+    console.log ('UPDATE: ' + status + ' ' + update + ' + ' + offset);
     return $.ajax({
       url: 'api/current.php',
       method: 'post',

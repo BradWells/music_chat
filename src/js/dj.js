@@ -1,5 +1,5 @@
 var SYNC_INTERVAL = 5000;
-var SYNC_DEGREE_FREEDOM = 1;
+var SYNC_DEGREE_FREEDOM = .5;
 
 var dj = {
   controls : {},
