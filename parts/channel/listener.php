@@ -5,6 +5,6 @@
 <div class='channel-container hide'>
   <button type='button' id='channel-container-sync'>Start Listening </button>
   <p class='channel-notification'></p>
-  <?php include 'parts/channel/player.php'; ?>
+  <?php include $root . 'parts/channel/player.php'; ?>
 </div>
-<?php include 'parts/channel/loader.php'; ?>
+<?php include $root . 'parts/channel/loader.php'; ?>

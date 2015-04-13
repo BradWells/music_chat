@@ -7,7 +7,7 @@
 dj.api = {
   getChannel: function(channelName) {
     return $.ajax({
-      url: 'api/channel.php',
+      url: ROOT + 'api/channel.php',
       method: 'get',
       dataType: 'json',
       data: {
@@ -18,7 +18,7 @@ dj.api = {
 
   createChannel: function(channelName) {
     return $.ajax({
-      url: 'api/channel.php',
+      url:  ROOT + 'api/channel.php',
       method: 'post',
       dataType: 'json',
       data: {
@@ -29,7 +29,7 @@ dj.api = {
 
   addTrack: function(channelId, trackName, trackUrl, trackNumber) {
     return $.ajax({
-      url: 'api/track.php',
+      url:  ROOT + 'api/track.php',
       method: 'post',
       dataType: 'json',
       data: {
@@ -44,7 +44,7 @@ dj.api = {
   updateCurrent: function(channelName, trackId, status, update, offset) {
     console.log ('UPDATE: ' + status + ' ' + update + ' + ' + offset);
     return $.ajax({
-      url: 'api/current.php',
+      url:  ROOT + 'api/current.php',
       method: 'post',
       dataType: 'json',
       data: {

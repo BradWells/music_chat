@@ -5,6 +5,7 @@
  */
 dj.view = {
   onTrackChange: function() {
+    console.log ('TRACK CHANGE');
     $('.player-name').html(dj.controls.currentTrack.name);
     $('.player-time-current').html('~:~');
     $('.player-time-total').html('~:~');
@@ -42,11 +43,24 @@ dj.view = {
     if (dj.channel.owner) {
       $('.channel-title-modifier').html('Station: ');
     } else {
-      $('.channel-title-modifier').html('You\'re listening to the sweet sounds of ');
+      $('.channel-title-modifier').html('Ready to play: ');
+      $('.player').addClass('no-control');
     }
+
     $('.channel-container').removeClass('hide');
     $('.channel-loader-container').addClass('hide');
+
     $('.channel-title-status').html(dj.controls.state.status);
+
+    if (dj.controls.state.status == 'UNSET') {
+      $('.player').hide();
+      $('.player-controls').hide();
+    }
+  },
+  trackTemplate: _.template('<li style="display: none;" id="track-<%- id %>"><%- name %> <button type="button" class="channel-set-track" data-track="<%- id %>"><i class="fa fa-fw fa-play"></i></button></li>'),
+  onTrackAdded: function(t) {
+    $('#tracklist').append(dj.view.trackTemplate(t));
+    $('#track-' + t.id).slideDown();
   }
 }
 
@@ -60,6 +74,8 @@ dj.view = {
 $(document).on('click', '.channel-set-track', function() {
   var track_id = $(this).data('track');
   var track = dj.channel['tracks'][track_id]
+  $('.player').show();
+  $('.player-controls').show();
   dj.controls.setTrack(track);
 });
 
@@ -89,12 +105,14 @@ $(document).on('click', '.player-controls-play', function() {
 
 // ## Play Meter/Slider
 $(document).on('click', '.player-meter', function(e) {
-  var posX = $(this).offset().left;
-  var mouseX = e.pageX;
-  var width = $(this).width();
-  var prog = (mouseX - posX)/width;
-  var loc = dj.controls.duration() * prog;
-  dj.controls.location(loc);
+  if (dj.channel.owner) {
+    var posX = $(this).offset().left;
+    var mouseX = e.pageX;
+    var width = $(this).width();
+    var prog = (mouseX - posX) / width;
+    var loc = dj.controls.duration() * prog;
+    dj.controls.location(loc);
+  }
 });
 
 // ## Volume Controls
@@ -110,11 +128,15 @@ $(document).on('click', '.player-volume', function(e) {
 // ## Create Channel Button
 $(document).on('click', '#create-channel', function() {
   var name = $('#create-channel-name').val();
-  $('#new-channel-container').html('<h4>loading...</h4>');
+  $('.channel-title').html('Creating channel &hellip;');
+  $('.new-channel-loader-container').removeClass('hide');
+  $('.new-channel-container').addClass('hide');
   dj.api.createChannel(name).done(function(data) {
-    $('#new-channel-container').addClass('hide');
-    $('#channel-container').removeClass('hide');
-    dj.channel = data;
+    if (data) {
+      location.reload();
+    } else {
+      $('#create-channel-response').html('This channel already exists');
+    }
   });
 });
 
@@ -123,27 +145,26 @@ $(document).on('click', '#channel-add-track-confirm', function() {
   var name = $('#channel-add-track-name').val();
   var url = $('#channel-add-track-url').val();
   var input = $('#channel-container').html();
-  $('#channel-container').html('<h4>loading...</h4>');
-  //TODO what exactly is the track number?
-  trackNumber = dj.channel.tracks.length + 1;
-  dj.api.addTrack(dj.channel.id, name, url, trackNumber).done(function(trackData) {
-    if(trackData){
-      $('#channel-container').html(
-        '<h4>Track Addition Successful<h4>' + input
-        ).prev().remove();
-    } else {
-      $('#channel-container').html(
-        '<h4>Track Addition Failed<h4>' + input
-        ).prev().remove();
-    }
-  });
+  dj.tracks.addTrack(name, url);
+});
+
+// ## Go-to-channel
+$(document).on('click', '#go-channel', function() {
+  var name = $('#go-channel-name').val();
+  if (name != '') {
+    name = encodeURIComponent(name);
+    location.href = ROOT + 'at/' + name;
+  } else {
+    $('#go-channel-err').html('channel name cannot be empty');
+  }
 });
 
 // ## Start Listening Button
 $(document).on('click', '#channel-container-sync', function() {
   $('#channel-container-sync').hide();
-  $('.channel-title-modifier').html('Enjoy the sweet sounds of');
+  $('.channel-title-modifier').html('Welcome to');
   dj.utils.synchronize(dj.channel.name, true);
+  $('.player').show();
   setInterval(dj.utils.synchronize,  SYNC_INTERVAL, dj.channel.name, false);
 });
 

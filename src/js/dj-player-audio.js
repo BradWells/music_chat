@@ -11,7 +11,7 @@ dj.players.audio = {
     'audio/mpeg',
     'audio/ogg',
     'audio/wav',
-    'audio/webm'
+    'audio/webm',
   ],
   handles: function(track) {
     var t = track.type;

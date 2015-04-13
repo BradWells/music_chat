@@ -97,7 +97,15 @@ class DJ {
    * @return boolean true if track was added, false otherwise
    */
   public static function add_channel_track($con, $channel_id, $track_name, $track_url, $track_number) {
-    $track_type = DJ::get_track_type($track_url);
+
+    $youtube = DJ::check_youtube_url($track_url);
+
+    if ($youtube) {
+      $track_type = 'youtube';
+      $track_url = $youtube;
+    } else {
+      $track_type = DJ::get_track_type($track_url);
+    }
 
     // make sure track has a name
     if (strlen($track_name) == 0) return false;
@@ -117,6 +125,12 @@ class DJ {
 
     // return the newly made track
     return DJ::get_track($con, $track_id);
+  }
+
+  public static function check_youtube_url($track_url) {
+    $pattern = "/^(?:http(?:s)?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:(?:watch)?\?(?:.*&)?v(?:i)?=|(?:embed|v|vi|user)\/))([^\?&\"'>]+)/";
+    preg_match($pattern, $track_url, $matches);
+    return empty($matches) ? false : $matches[1];
   }
 
   /**
@@ -187,6 +201,21 @@ class DJ {
     }
 
     return false;
+  }
+
+  /**
+   * Update the given channels "currently playing" info
+   * @param mywrap_con $con object to run queries on
+   * @param int $count number of results to return
+   * @return array of recent tracks
+   */
+  public static function get_recent_channels($con, $count=10) {
+    $results = $con->run(
+      'select * from channels order by created desc limit ?',
+      'i',
+      $count
+    );
+    return $results->fetch_all_array();
   }
 
 } ?>

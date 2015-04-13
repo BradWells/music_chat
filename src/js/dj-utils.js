@@ -10,13 +10,15 @@ dj.utils = {
   },
   updateChannelCurrent: function() {
     if (dj.channel.owner) {
-      var update = (new Date);
-      var chan = dj.channel.name;
-      var track = dj.controls.currentTrack.id;
-      var status = dj.controls.state.status;
-      var offset = dj.controls.location();
-      if (offset == undefined) offset = 0;
-      dj.api.updateCurrent(chan, track, status, update.datetime(), offset);
+      setTimeout(function() {
+        var update = (new Date);
+        var chan = dj.channel.name;
+        var track = dj.controls.currentTrack.id;
+        var status = dj.controls.state.status;
+        var offset = dj.controls.location();
+        if (offset == undefined) offset = 0;
+        dj.api.updateCurrent(chan, track, status, update.datetime(), offset);
+      }, 500);
     }
   },
   formatSeconds: function(s) {

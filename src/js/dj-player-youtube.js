@@ -46,16 +46,18 @@ dj.players.youtube = {
   _handleStateChange: function(e) {
     // check if video is loaded
     if (e.data == 5 || e.data == 1) {
-      // pop all 'loaded' events from event que
-      for (var k in dj.players.youtube._evnts) {
-        if (dj.players.youtube._evnts.hasOwnProperty(k)) {
-          var e = dj.players.youtube._evnts[k];
-          if (e.type == 'load') {
-            e.cb();
-            delete dj.players.youtube._evnts[k];
+      setTimeout(function() {
+        // pop all 'loaded' events from event que
+        for (var k in dj.players.youtube._evnts) {
+          if (dj.players.youtube._evnts.hasOwnProperty(k)) {
+            var e = dj.players.youtube._evnts[k];
+            if (e.type == 'load') {
+              e.cb();
+              delete dj.players.youtube._evnts[k];
+            }
           }
         }
-      }
+      }, 500);
     }
     if (e.data == 0) {
       // pop all 'ended' events from event que

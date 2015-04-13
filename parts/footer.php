@@ -14,21 +14,19 @@
 
   <!-- vendor scripts -->
   <script src='https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
-  <script src='src/js/underscore.min.js'></script>
+  <script src='<?php echo $root; ?>src/js/underscore.min.js'></script>
 
   <!-- local scripts -->
-  <script> var dj = {}; </script>
-
-  <script src='src/js/dj.js'></script>
-  <script src='src/js/dj-api.js'></script>
-  <script src='src/js/dj-controls.js'></script>
-  <script src='src/js/dj-utils.js'></script>
-  <script src='src/js/dj-view.js'></script>
-  <script src='src/js/dj-tracks.js'></script>
+  <script src='<?php echo $root; ?>src/js/dj.js'></script>
+  <script src='<?php echo $root; ?>src/js/dj-api.js'></script>
+  <script src='<?php echo $root; ?>src/js/dj-controls.js'></script>
+  <script src='<?php echo $root; ?>src/js/dj-utils.js'></script>
+  <script src='<?php echo $root; ?>src/js/dj-view.js'></script>
+  <script src='<?php echo $root; ?>src/js/dj-tracks.js'></script>
 
   <!-- players -->
-  <script src='src/js/dj-player-youtube.js'></script>
-  <script src='src/js/dj-player-audio.js'></script>
+  <script src='<?php echo $root; ?>src/js/dj-player-youtube.js'></script>
+  <script src='<?php echo $root; ?>src/js/dj-player-audio.js'></script>
 
   <!-- youtube api -->
   <script src='https://www.youtube.com/iframe_api'></script>

@@ -82,10 +82,10 @@ dj.controls = {
   },
   location: function(loc) {
     if (!this.ACTIVE) return false;
-    this.state.location = loc;
     if (loc == undefined) return this.activePlayer.location();
-    this.activePlayer.location(loc)
-    dj.utils.updateChannelCurrent();
+    this.state.location = loc;
+    this.activePlayer.location(loc);
+    dj.utils.updateChannelCurrent;
   },
   duration: function() {
     if (!this.ACTIVE) return false;
@@ -152,6 +152,7 @@ dj.controls = {
       });
 
       this.activePlayer.load(this.currentTrack.url);
+      dj.view.onTrackChange();
     } else {
 
       if (self.state.status == 'UNSET' || self.state.status == 'PLAYING') {

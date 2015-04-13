@@ -12,8 +12,8 @@
 </div>
 <div class='channel-container hide'>
 
-  <?php include 'parts/channel/player-controls.php'; ?>
-  <?php include 'parts/channel/player.php'; ?>
+  <?php include $root . 'parts/channel/player-controls.php'; ?>
+  <?php include $root . 'parts/channel/player.php'; ?>
 
   <h4>Add Track</h4>
 
@@ -41,4 +41,4 @@
     </ul>
   </div>
 </div>
-<?php include 'parts/channel/loader.php'; ?>
+<?php include $root . 'parts/channel/loader.php'; ?>

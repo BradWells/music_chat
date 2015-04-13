@@ -11,11 +11,13 @@ var dj = {
 }
 
 $(document).ready(function() {
-  dj.api.getChannel(CURRENT_CHANNEL_NAME).done(function(data) {
-    dj.channel = data;
-    dj.view.onPageLoad();
-    dj.controls.initialize();
-  });
+  if (typeof CHANNEL_NAME !== 'undefined') {
+    dj.api.getChannel(CHANNEL_NAME).done(function(data) {
+      dj.channel = data;
+      dj.controls.initialize();
+      dj.view.onPageLoad();
+    });
+  }
 });
 
 
