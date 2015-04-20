@@ -1,3 +1,6 @@
+<!-- This is main page for a channel-->
+
+<!-- Get the root directory -->
 <?php $_r = preg_replace(':/[^/]+:', '../', dirname($_SERVER['SCRIPT_NAME'])); ?>
 <?php $root = $_r == '/' || $_r == '\\' ? '' : $_r; ?>
 <?php
