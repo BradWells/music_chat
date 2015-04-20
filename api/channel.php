@@ -1,4 +1,8 @@
 <?php
+/**
+ * This is the server-side http request handler for channels.
+ * Specifically, it handles getting a channel by name (GET) and creating a new channel (POST).
+ */
 session_start();
 require_once '../lib/mysqli-wrapper/mywrap.php';
 require_once '../lib/dj.php';

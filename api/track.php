@@ -1,4 +1,8 @@
 <?php
+/**
+ * This is the server-side http request handler for tracks.
+ * Specifically, it handles creating a new track (POST)
+ */
 session_start();
 require_once '../lib/mysqli-wrapper/mywrap.php';
 require_once '../lib/dj.php';

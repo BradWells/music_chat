@@ -1,4 +1,8 @@
 <?php
+/**
+ * This is the server-side http request handler for a current channel status.
+ * Specifically, it handles updating a channel's info server-side when a client-side request is given (POST).
+ */
 session_start();
 require_once '../lib/mysqli-wrapper/mywrap.php';
 require_once '../lib/dj.php';
