@@ -1,6 +1,18 @@
 # music_chat
 ComS 486 project
 
+## Installation
+
+### Requirements
+ - A machine running Linux (preferably Debian or Ubuntu)
+
+### Setting up a LAMP server
+Follow the instructions on the following link to set up a LAMP server:
+https://www.digitalocean.com/community/tutorials/how-to-install-linux-apache-mysql-php-lamp-stack-on-ubuntu
+
+### Setting up MySQL
+Next, you must create the MySQL tables.  Copy and paste the following code into a MySQL shell:
+
 #### channels table
 ```mysql
 CREATE TABLE `channels` (
