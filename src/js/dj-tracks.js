@@ -1,3 +1,6 @@
+/**
+ * An interface for the dj's track list
+ */
 dj.tracks = {
   mode: 'SHUFFLE',
   setMode: function(mode) {
