@@ -1,4 +1,8 @@
+<!-- The home page of the site, this is the first thing given to a visitor -->
+
+<!-- Get the root directory -->
 <?php $_r = preg_replace(':/[^/]+:', '../', dirname($_SERVER['SCRIPT_NAME'])); ?>
+<!-- Get rid of a singular slash -->
 <?php $root = $_r == '/' || $_r == '\\' ? '' : $_r; ?>
 <?php include 'parts/header.php'; ?>
 <?php $con = new mywrap_con(); ?>
@@ -41,6 +45,6 @@
   </table>
 </div>
 
-
+<!-- Set root variable of client javascript to the root determined by php -->
 <?php echo "\n<script> var ROOT = " . json_encode($root) . "; </script>\n"; ?>
 <?php include 'parts/footer.php'; ?>
