@@ -13,8 +13,7 @@ CREATE TABLE `channels` (
 	`current_status` ENUM('PLAY','PAUSE','NEW','GONE') NOT NULL DEFAULT 'NEW',
 	PRIMARY KEY (`id`),
 	UNIQUE INDEX `name` (`name`),
-	INDEX `FK_channels_tracks` (`current_track`),
-	CONSTRAINT `FK_channels_tracks` FOREIGN KEY (`current_track`) REFERENCES `tracks` (`id`) ON UPDATE CASCADE ON DELETE CASCADE
+	INDEX `FK_channels_tracks` (`current_track`)
 )
 COLLATE='latin1_swedish_ci'
 ENGINE=InnoDB
@@ -31,8 +30,7 @@ CREATE TABLE `tracks` (
 	`channel_id` INT(11) NOT NULL,
 	`type` VARCHAR(50) NULL DEFAULT NULL,
 	PRIMARY KEY (`id`),
-	INDEX `FK__channels` (`channel_id`),
-	CONSTRAINT `FK__channels` FOREIGN KEY (`channel_id`) REFERENCES `channels` (`id`) ON UPDATE CASCADE ON DELETE CASCADE
+	INDEX `FK__channels` (`channel_id`)
 )
 COLLATE='latin1_swedish_ci'
 ENGINE=InnoDB
