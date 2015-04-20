@@ -2,7 +2,7 @@
 
 <!-- Get the root directory -->
 <?php $_r = preg_replace(':/[^/]+:', '../', dirname($_SERVER['SCRIPT_NAME'])); ?>
-<!-- Get rid of a singular slash -->
+<!-- If root is a single slash, remove the slash-->
 <?php $root = $_r == '/' || $_r == '\\' ? '' : $_r; ?>
 <?php include 'parts/header.php'; ?>
 <?php $con = new mywrap_con(); ?>

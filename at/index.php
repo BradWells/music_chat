@@ -2,6 +2,7 @@
 
 <!-- Get the root directory -->
 <?php $_r = preg_replace(':/[^/]+:', '../', dirname($_SERVER['SCRIPT_NAME'])); ?>
+<!-- If root is a single slash, remove the slash-->
 <?php $root = $_r == '/' || $_r == '\\' ? '' : $_r; ?>
 <?php
 
@@ -23,6 +24,7 @@ if (!$channel) {
 
 echo "\n<script> var CHANNEL_EXISTS = " . json_encode(!!$channel) . "; </script>\n";
 echo "\n<script> var CHANNEL_NAME = " . json_encode($channel_name) . "; </script>\n";
+//Set root variable of client javascript to the root determined by php
 echo "\n<script> var ROOT = " . json_encode($root) . "; </script>\n";
 include $root . 'parts/footer.php';
 ?>
