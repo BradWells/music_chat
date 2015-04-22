@@ -1,6 +1,13 @@
+<!-- Page included in most pages of the website. Does necessary setup, and begins the display of the page -->
+
+<!-- Starts the php ssession used to track users of the website -->
 <?php session_start(); ?>
+
+<!-- Includes the necessary files needed for the database calls -->
 <?php require_once $root . 'lib/mysqli-wrapper/mywrap.php'; ?>
 <?php require_once $root . 'lib/dj.php'; ?>
+
+<!-- Displays title of the page, and references the needed stylesheets -->
 <!doctype html>
 <html lang='en'>
   <head>
