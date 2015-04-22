@@ -7,7 +7,7 @@ His friends can join the DJ's channel by visiting the link given to them by the 
 
 Currently, the audio URL's that are supported are:
  - Links directly to HTML5-supported audio files (.ogg, .aac, .mp4, .wav, .webm)
- - Links directly to HTML5-supported audio files (.ogg, .mp4, .webm)
+ - Links directly to HTML5-supported video files (.ogg, .mp4, .webm)
  - Links directly to YouTube videos
 
 ## Project and Source Code Information
