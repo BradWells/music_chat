@@ -62,3 +62,31 @@ COLLATE='latin1_swedish_ci'
 ENGINE=InnoDB
 AUTO_INCREMENT=6;
 ```
+
+### Downloading the repository
+
+#### Setting up Git
+Next, you need to download the Be Your Own DJ repository
+
+Make sure git is installed on your system.
+For Debian and Ubuntu use the following commands:
+```
+sudo apt-get update
+sudo apt-get install git
+```
+For other Linux distributions, use the package editor provided in your distribution or follow the guide at
+https://www.digitalocean.com/community/tutorials/how-to-install-git-on-ubuntu-14-04
+
+#### Cloning the repository
+Navigate to the repositories Github page (if you are reading this you are probably already there)
+Find the HTTPS clone url on the page, at the time of writing it is https://github.com/BradWells/music_chat.git
+
+On your Linux machine, navigate to the location you want Be Your Own DJ to be installed.
+Run the following command:
+```
+git clone https://github.com/BradWells/music_chat.git
+```
+This will download the repository to your machine.
+
+## Running Be Your Own DJ
+Once Be Your Own DJ's repository is installed, you must run the web server on your machine.
